@@ -2,15 +2,21 @@
 void Application::InitVariables(void)
 {
 	////Change this to your name and email
-	m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu";
+	m_sProgrammer = "Thomas Roman - tfr8811@rit.edu";
 	vector3 v3Position(0.0f, 0.0f, 30.0f);
 	vector3 v3Target = ZERO_V3;
 	vector3 v3Upward = AXIS_Y;
 	m_pCameraMngr->SetPositionTargetAndUpward(v3Position, v3Target, v3Upward);
+
 	//init the mesh
-	m_pMesh = new MyMesh();
-	//m_pMesh->GenerateCube(1.0f, C_WHITE);
-	m_pMesh->GenerateSphere(1.0f, 5, C_WHITE);
+	m_uMeshCount = 46;
+
+	for (unsigned int i = 0; i < m_uMeshCount; i++)
+	{
+		MyMesh* pMesh = new MyMesh();
+		m_pMeshList.push_back(pMesh);
+		//m_pMeshList[i]->GenerateAlien(1.0f, C_PURPLE);
+	}
 }
 void Application::Update(void)
 {

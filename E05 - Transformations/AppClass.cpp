@@ -2,16 +2,19 @@
 void Application::InitVariables(void)
 {
 	////Change this to your name and email
-	m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu";
+	m_sProgrammer = "Thomas Roman - tfr8811@rit.edu";
 	vector3 v3Position(0.0f, 0.0f, 10.0f);
 	vector3 v3Target = ZERO_V3;
 	vector3 v3Upward = AXIS_Y;
 	m_pCameraMngr->SetPositionTargetAndUpward(v3Position, v3Target, v3Upward);
 
 	//Allocate the memory for the Meshes
-	m_pMesh = new MyMesh();
-	m_pMesh->GenerateCube(1.0f, C_BLACK);
-		
+	
+	m_uMeshCount = 48;
+	for (int i = 0; i < m_uMeshCount; i++){
+		m_pMeshList.push_back(new MyMesh());
+		m_pMeshList[i]->GenerateCube(1.0f, C_BLACK);
+	}
 }
 void Application::Update(void)
 {
@@ -39,7 +42,123 @@ void Application::Display(void)
 	matrix4 m4Projection = m_pCameraMngr->GetProjectionMatrix();
 	matrix4 m4View = m_pCameraMngr->GetViewMatrix();
 
-	m_pMesh->Render(m4Projection, m4View, ToMatrix4(m_qArcBall));
+	//make the invader
+	int i = 0;
+	float speed = 0.0f;
+	speed += 0.1f;
+
+	// row 1
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(-3.0f+speed, 4.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(3.0f + speed, 4.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+
+	// row 2
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(-2.0f + speed, 3.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(2.0f + speed, 3.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+
+	// row 3
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(-3.0f + speed, 2.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(-2.0f + speed, 2.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(-3.0f + speed, 2.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(-2.0f + speed, 2.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(-1.0f + speed, 2.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(0.0f + speed, 2.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(1.0f + speed, 2.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(2.0f + speed, 2.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(3.0f + speed, 2.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+
+	// row 4
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(-4.0f + speed, 1.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(-3.0f + speed, 1.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(-1.0f + speed, 1.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(0.0f + speed, 1.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(1.0f + speed, 1.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(3.0f + speed, 1.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(4.0f + speed, 1.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+
+	// row 5
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(-5.0f + speed, 0.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(-4.0f + speed, 0.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(-3.0f + speed, 0.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(-2.0f + speed, 0.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(-1.0f + speed, 0.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(0.0f + speed, 0.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(1.0f + speed, 0.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(2.0f + speed, 0.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(3.0f + speed, 0.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(4.0f + speed, 0.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(5.0f + speed, 0.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+
+	// row 6
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(-5.0f + speed, -1.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(-3.0f + speed, -1.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(-2.0f + speed, -1.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(-1.0f + speed, -1.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(0.0f + speed, -1.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(1.0f + speed, -1.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(2.0f + speed, -1.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(3.0f + speed, -1.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(5.0f + speed, -1.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+
+	// row 7
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(-5.0f + speed, -2.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(-3.0f + speed, -2.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(3.0f + speed, -2.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(5.0f + speed, -2.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+
+	// row 8
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(-2.0f + speed, -3.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(-1.0f + speed, -3.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(1.0f + speed, -3.0f, 0.0f))), ToMatrix4(m_qArcBall);
+	i++;
+	m_pMeshList[i]->Render(m4Projection, m4View, glm::translate(vector3(2.0f + speed, -3.0f, 0.0f))), ToMatrix4(m_qArcBall);
+
+
 
 	// draw a skybox
 	m_pModelMngr->AddSkyboxToRenderList();
@@ -59,7 +178,9 @@ void Application::Display(void)
 void Application::Release(void)
 {
 	//Release meshes
-	SafeDelete(m_pMesh);
+	for (int i = 0; i < m_uMeshCount; i++) {
+		SafeDelete(m_pMeshList[i]);
+	}
 
 	//release GUI
 	ShutdownGUI();

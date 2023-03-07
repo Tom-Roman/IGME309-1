@@ -22,7 +22,9 @@ class Application
 {
 	MyMesh* m_pMesh = nullptr;
 private:
-	String m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu";
+	String m_sProgrammer = "Thomas Roman - tfr8811@rit.edu";
+	uint m_uMeshCount;
+	std::vector<MyMesh*> m_pMeshList;
 	static ImGuiObject gui; //GUI object
 
 	uint m_uRenderCallCount = 0; //count of render calls per frame
