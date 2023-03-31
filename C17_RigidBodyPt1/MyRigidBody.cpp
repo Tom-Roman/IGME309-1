@@ -98,6 +98,7 @@ MyRigidBody::MyRigidBody(std::vector<vector3> a_pointList)
 	
 	//Get the distance between the center and either the min or the max
 	m_fRadius = glm::distance(m_v3Center, m_v3MinL);
+	m_v3HalfWidth = (m_v3MaxL - m_v3MaxL) / 2.0f;
 }
 MyRigidBody::MyRigidBody(MyRigidBody const& other)
 {
@@ -138,10 +139,18 @@ void MyRigidBody::AddToRenderList(void)
 	if (!m_bVisible)
 		return;
 
-	//m_pMeshMngr->AddWireCubeToRenderList(glm::translate(m_m4ToWorld, m_v3Center) * glm::scale(m_v3HalfWidth * 2.0f), C_WHITE);
-	m_pModelMngr->AddWireSphereToRenderList(glm::translate(m_m4ToWorld, m_v3Center) * glm::scale(vector3(m_fRadius)), m_v3Color);
+	matrix4 m4Transform = m_m4ToWorld * glm::translate(vector3(m_v3Center));
+	m4Transform = m4Transform * glm::scale(vector3(m_fRadius));
+
+	m4Transform = m_m4ToWorld * glm::translate(vector3(m_v3Center));
+	m4Transform = m4Transform * glm::scale(m_v3HalfWidth * 2.0f);
+	m_pModelMngr->AddWireCubeToRenderList(m4Transform, m_v3Color);
 }
 bool MyRigidBody::IsColliding(MyRigidBody* const other)
 {
 	return (glm::distance(GetCenterGlobal(), other->GetCenterGlobal()) < m_fRadius + other->m_fRadius);
+}
+
+vector3 GlobalizeVector(vector3 input) {
+	return input;
 }

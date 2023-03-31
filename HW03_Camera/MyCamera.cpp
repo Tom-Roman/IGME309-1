@@ -21,27 +21,62 @@ void MyCamera::MoveForward(float a_fDistance)
 	//		 in the _Binary folder you will notice that we are moving 
 	//		 backwards and we never get closer to the plane as we should 
 	//		 because as we are looking directly at it.
-	m_v3Position += vector3(0.0f, 0.0f, a_fDistance);
-	m_v3Target += vector3(0.0f, 0.0f, a_fDistance);
+	
+	//create quaternion from pitch yaw roll
+	glm::quat orientation = glm::quat(glm::radians(m_v3PitchYawRoll));
+
+	// create the forward vector
+	glm::vec3 forward = glm::rotate(orientation, glm::vec3(0.0f, 0.0f, -1.0f));
+	m_v3Forward = glm::normalize(forward);
+
+	// multiply distance by forward
+	m_v3Position += a_fDistance * m_v3Forward;
+	m_v3Target += a_fDistance * m_v3Forward;
 }
 void MyCamera::MoveVertical(float a_fDistance)
 {
-	//Tip:: Look at MoveForward
+	//create quaternion from pitch yaw roll
+	glm::quat orientation = glm::quat(glm::radians(m_v3PitchYawRoll));
+
+	// create the up vector
+	glm::vec3 up = glm::rotate(orientation, glm::vec3(0.0f, 1.0f, 0.0f));
+	m_v3Upward = glm::normalize(up);
+
+	// multiply distance by up
+	m_v3Position += a_fDistance * m_v3Upward;
+	m_v3Target += a_fDistance * m_v3Upward;
 }
 void MyCamera::MoveSideways(float a_fDistance)
 {
-	//Tip:: Look at MoveForward
+	//create quaternion from pitch yaw roll
+	glm::quat orientation = glm::quat(glm::radians(m_v3PitchYawRoll));
+
+	// create the rightward vector
+	glm::vec3 forward = glm::rotate(orientation, glm::vec3(0.0f, 0.0f, -1.0f));
+	glm::vec3 up = glm::rotate(orientation, glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::vec3 right = glm::cross(forward, up);
+	m_v3Rightward = glm::normalize(right);
+
+	// multiply distance by right
+	m_v3Position += a_fDistance * m_v3Rightward;
+	m_v3Target += a_fDistance * m_v3Rightward;
 }
 void MyCamera::CalculateView(void)
 {
-	//Tips:: Directional vectors will be affected by the orientation in the quaternion
-	//		 After calculating any new vector one needs to update the View Matrix
-	//		 Camera rotation should be calculated out of the m_v3PitchYawRoll member
-	//		 it will receive information from the main code on how much these orientations
-	//		 have change so you only need to focus on the directional and positional 
-	//		 vectors. There is no need to calculate any right click process or connections.
+	//create quaternion from pitch yaw roll
+	glm::quat orientation = glm::quat(glm::radians(m_v3PitchYawRoll));
+
+	// create the forward and up vectors
+	glm::vec3 forward = glm::rotate(orientation, glm::vec3(0.0f, 0.0f, -1.0f));
+	glm::vec3 up = glm::rotate(orientation, glm::vec3(0.0f, 1.0f, 0.0f));
+	m_v3Forward = glm::normalize(forward);
+	m_v3Upward = glm::normalize(up);
+
+	// I changed the strength in the controls script because this was very slow
+	m_v3Target = m_v3Position + m_v3Forward;
 	m_m4View = glm::lookAt(m_v3Position, m_v3Target, m_v3Upward);
 }
+
 //You can assume that the code below does not need changes unless you expand the functionality
 //of the class or create helper methods, etc.
 void MyCamera::Init(vector3 a_v3Position, vector3 a_v3Target, vector3 a_v3Upward)
