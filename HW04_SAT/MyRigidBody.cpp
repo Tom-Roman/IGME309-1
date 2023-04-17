@@ -1,27 +1,129 @@
 #include "MyRigidBody.h"
 using namespace BTX;
 //Allocation
+
 uint MyRigidBody::SAT(MyRigidBody* const a_pOther)
 {
 	//TODO: Calculate the SAT algorithm I STRONGLY suggest you use the
 	//Real Time Collision detection algorithm for OBB here but feel free to
 	//implement your own solution.
-	return BTXs::eSATResults::SAT_NONE;
+	float EPSILON = 0.0000000001;
+	float ra, rb;
+	matrix4 R;
+	matrix4 AbsR;
+
+	// model matrices
+	matrix4 au = GetModelMatrix();
+	matrix4 bu = a_pOther->GetModelMatrix();
+	
+	// centers
+	vector3 ac = GetCenterGlobal();
+	vector3 bc = a_pOther->GetCenterGlobal();
+
+	// halfwidths
+	vector3 ae = GetHalfWidth();
+	vector3 be = a_pOther->GetHalfWidth();
+
+	// Compute rotation matrix expressing b in a’s coordinate frame
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			R[i][j] = glm::dot(au[i], bu[j]);
+	// Compute translation vector t
+	vector3 t = bc - ac;
+	// Bring translation into a’s coordinate frame
+	vector3 au0 = vector3(au[0].x, au[0].y, au[0].z);
+	vector3 au1 = vector3(au[1].x, au[1].y, au[1].z);
+	vector3 au2 = vector3(au[2].x, au[2].y, au[2].z);
+	t = vector3(glm::dot(t, au0), glm::dot(t, au1), glm::dot(t, au2));
+	// Compute common subexpressions. Add in an epsilon term to
+	// counteract arithmetic errors when two edges are parallel and
+	// their cross product is (near) null (see text for details)
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			AbsR[i][j] = glm::abs(R[i][j]) + EPSILON;
+	// Test axes L = A0, L = A1, L = A2
+	for (int i = 0; i < 3; i++) {
+		ra = ae[i];
+		rb = be[0] * AbsR[i][0] + be[1] * AbsR[i][1] + be[2] * AbsR[i][2];
+		if (glm::abs(t[i]) > ra + rb) return 0;
+	}
+	// Test axes L = B0, L = B1, L = B2
+	for (int i = 0; i < 3; i++) {
+		ra = ae[0] * AbsR[0][i] + ae[1] * AbsR[1][i] + ae[2] * AbsR[2][i];
+		rb = be[i];
+		if (glm::abs(t[0] * R[0][i] + t[1] * R[1][i] + t[2] * R[2][i]) > ra + rb) return 0;
+	}
+	// Test axis L = A0 x B0
+	ra = ae[1] * AbsR[2][0] + ae[2] * AbsR[1][0];
+	rb = be[1] * AbsR[0][2] + be[2] * AbsR[0][1];
+	if (glm::abs(t[2] * R[1][0] - t[1] * R[2][0]) > ra + rb) return 0;
+	// Test axis L = A0 x B1
+	ra = ae[1] * AbsR[2][1] + ae[2] * AbsR[1][1];
+	rb = be[0] * AbsR[0][2] + be[2] * AbsR[0][0];
+	if (glm::abs(t[2] * R[1][1] - t[1] * R[2][1]) > ra + rb) return 0;
+	// Test axis L = A0 x B2
+	ra = ae[1] * AbsR[2][2] + ae[2] * AbsR[1][2];
+	rb = be[0] * AbsR[0][1] + be[1] * AbsR[0][0];
+	if (glm::abs(t[2] * R[1][2] - t[1] * R[2][2]) > ra + rb) return 0;
+	// Test axis L = A1 x B0
+	ra = ae[0] * AbsR[2][0] + ae[2] * AbsR[0][0];
+	rb = be[1] * AbsR[1][2] + be[2] * AbsR[1][1];
+	if (glm::abs(t[0] * R[2][0] - t[2] * R[0][0]) > ra + rb) return 0;
+	// Test axis L = A1 x B1
+	ra = ae[0] * AbsR[2][1] + ae[2] * AbsR[0][1];
+	rb = be[0] * AbsR[1][2] + be[2] * AbsR[1][0];
+	if (glm::abs(t[0] * R[2][1] - t[2] * R[0][1]) > ra + rb) return 0;
+	// Test axis L = A1 x B2
+	ra = ae[0] * AbsR[2][2] + ae[2] * AbsR[0][2];
+	rb = be[0] * AbsR[1][1] + be[1] * AbsR[1][0];
+	if (glm::abs(t[0] * R[2][2] - t[2] * R[0][2]) > ra + rb) return 0;
+	// Test axis L = A2 x B0
+	ra = ae[0] * AbsR[1][0] + ae[1] * AbsR[0][0];
+	rb = be[1] * AbsR[2][2] + be[2] * AbsR[2][1];
+	if (glm::abs(t[1] * R[0][0] - t[0] * R[1][0]) > ra + rb) return 0;
+	// Test axis L = A2 x B1
+	ra = ae[0] * AbsR[1][1] + ae[1] * AbsR[0][1];
+	rb = be[0] * AbsR[2][2] + be[2] * AbsR[2][0];
+	if (glm::abs(t[1] * R[0][1] - t[0] * R[1][1]) > ra + rb) return 0;
+	// Test axis L = A2 x B2
+	ra = ae[0] * AbsR[1][2] + ae[1] * AbsR[0][2];
+	rb = be[0] * AbsR[2][1] + be[1] * AbsR[2][0];
+	if (glm::abs(t[1] * R[0][2] - t[0] * R[1][2]) > ra + rb) return 0;
+	// Since no separating axis is found, the OBBs must be intersecting
+	return 1;
 }
+
+
 bool MyRigidBody::IsColliding(MyRigidBody* const a_pOther)
 {
 	//check if spheres are colliding
-	bool bColliding = true;
-	/*
-	* We use Bounding Spheres or ARBB as a pre-test to avoid expensive calculations (SAT)
-	* we default bColliding to true here to always fall in the need of calculating
-	* SAT for the sake of the assignment.
-	*/
+	bool bColliding = false;
+	// centers
+	vector3 ac = GetCenterGlobal();
+	vector3 bc = a_pOther->GetCenterGlobal();
+
+	// raidii
+	float ae = GetRadius();
+	float be = a_pOther->GetRadius();
+
+	// get distance
+	vector3 t = bc - ac;
+	float distance = glm::sqrt((t.x*t.x) + (t.y*t.y) + (t.z*t.z));
+
+	// if the sum of the radii is greater than the distance, we are colliding
+	if (ae + be > distance) {
+		bColliding = true;
+	}
+	
+	// We use Bounding Spheres or ARBB as a pre-test to avoid expensive calculations (SAT)
+	// we default bColliding to true here to always fall in the need of calculating
+	// SAT for the sake of the assignment.
+	
 	if (bColliding) //they are colliding with bounding sphere
 	{
 		uint nResult = SAT(a_pOther);
 
-		if (bColliding) //The SAT shown they are colliding
+		if (nResult) //The SAT shown they are colliding
 		{
 			this->AddCollisionWith(a_pOther);
 			a_pOther->AddCollisionWith(this);
